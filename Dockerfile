@@ -1,8 +1,8 @@
-FROM ubuntu:trusty
+FROM ubuntu:focal
 MAINTAINER Feng Honglin <hfeng@tutum.co>
 
 RUN apt-get update && \
-    apt-get -y --no-install-recommends install openssh-server autossh pwgen sshpass && \
+    apt-get -y --no-install-recommends install bash openssh-server autossh pwgen sshpass systemd rsyslog && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists && \
     mkdir -p /var/run/sshd && \
