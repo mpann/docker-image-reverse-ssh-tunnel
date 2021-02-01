@@ -80,23 +80,7 @@ else
     if [ ! -f /.root_pw_set ]; then
 	    SetRootPass
     fi
-    #exec service ssh start 
+    exec service ssh start 
     #exec /usr/sbin/sshd -D -e -E /var/log/auth.log
-    exec /usr/sbin/sshd -D       
-    status=$?
-    if [ $status -ne 0 ]; then
-     echo "Failed to start my_first_process: $status"
-     exit $status
-    fi
-    
-    
-    #exec /usr/sbin/rsyslogd  
-    status=$?
-    if [ $status -ne 0 ]; then
-     echo "Failed to start my_first_process: $status"
-     exit $status
-    fi
-
-
-
+    #exec /usr/sbin/sshd -D
 fi
