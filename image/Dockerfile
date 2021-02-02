@@ -76,14 +76,13 @@ RUN rm -rf /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_dsa_key && \
 
 
     
-ADD run.sh /run.sh
+ADD ssh/run.sh /rune.sh
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-ADD jail.local /etc/fail2ban/jail.local
+ADD fail2ban/jail.local /etc/fail2ban/jail.local
 
 RUN chmod +x /etc/fail2ban/jail.local
 RUN touch /var/log/auth.log
 RUN chown syslog:syslog /var/log/auth.log
-
 RUN chmod +x /*.sh
 
 ENV AUTHORIZED_KEYS **None**
@@ -93,7 +92,7 @@ ENV PUBLIC_HOST_PORT **None**
 ENV PROXY_PORT **None**
 
 EXPOSE 22
-EXPOSE 1080
+#EXPOSE 1080
 
 ENTRYPOINT ["/usr/bin/supervisord"]
 
