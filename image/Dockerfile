@@ -5,7 +5,17 @@ ENV VERSION=0.11.1 \
     SERVICE=fail2ban \
     FAIL2BAN_VERSION=0.11.1
 
+# Root password
+ENV STIMIO_PASSWORD NONE
+
+# Expose the regular ssh port
+EXPOSE 22
+# Expose other ports for reverse
+EXPOSE 19989:19999
+
+
 MAINTAINER Mikael PANN <mikael.pann@stimio.fr>
+
 
 RUN apt-get update && \
     apt-get install -y software-properties-common language-pack-en && \
@@ -38,19 +48,40 @@ RUN apt-get update && \
 
 
 
+# Create stimio user
+#RUN addgroup -S stimio && adduser -S -G stimio stimio -s /bin/sh
 
-    #mkdir /fail2ban && \ 
-    #git clone https://github.com/fail2ban/fail2ban /fail2ban && \
-    #pip3 install /fail2ban  
+SHELL ["/bin/bash", "-c"]
+ARG user=stimio
+ARG pwd=stimio
+ARG group=stimio
+ARG home=/home/$user
+
+
+RUN useradd --create-home -s /bin/bash $user \
+        && echo $user:$pwd | chpasswd \
+        && adduser $user sudo
+
+
+
+RUN sed -i "s;\GatewayPorts no;GatewayPorts yes;g" /etc/ssh/sshd_config && \
+    sed -i "s;\AllowTcpForwarding no;AllowTcpForwarding yes;g" /etc/ssh/sshd_config && \
+    sed -i "s;\#PermitRootLogin .*;PermitRootLogin no;g" /etc/ssh/sshd_config
+
+# Generate keys
+RUN rm -rf /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_dsa_key && \
+    ssh-keygen -f /etc/ssh/ssh_host_rsa_key -N '' -t rsa && \
+    ssh-keygen -f /etc/ssh/ssh_host_dsa_key -N '' -t dsa && \
+    mkdir -p /var/run/sshd
+
+
     
-#ADD fail2ban/* /etc/
 ADD run.sh /run.sh
-ADD entrypoint.sh /entrypoint.sh
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 ADD jail.local /etc/fail2ban/jail.local
 
 RUN chmod +x /etc/fail2ban/jail.local
-RUN echo "" > /var/log/auth.log
+RUN touch /var/log/auth.log
 RUN chown syslog:syslog /var/log/auth.log
 
 RUN chmod +x /*.sh
