@@ -2,6 +2,7 @@ version: "3.3"
 
 services:
   ops-reverse-ssh-tunnel:
+    privileged: true
     build: ./image/.
     env_file:
      - ./.env

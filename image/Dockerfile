@@ -49,15 +49,11 @@ RUN apt-get update && \
 
 
 # Create stimio user
-#RUN addgroup -S stimio && adduser -S -G stimio stimio -s /bin/sh
-
 SHELL ["/bin/bash", "-c"]
 ARG user=stimio
 ARG pwd=stimio
 ARG group=stimio
 ARG home=/home/$user
-
-
 RUN useradd --create-home -s /bin/bash $user \
         && echo $user:$pwd | chpasswd \
         && adduser $user sudo
@@ -76,14 +72,13 @@ RUN rm -rf /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_dsa_key && \
 
 
     
-ADD run.sh /run.sh
+ADD ssh/ssh_start.sh /ssh_start.sh
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-ADD jail.local /etc/fail2ban/jail.local
+ADD fail2ban/jail.local /etc/fail2ban/jail.local
 
 RUN chmod +x /etc/fail2ban/jail.local
 RUN touch /var/log/auth.log
 RUN chown syslog:syslog /var/log/auth.log
-
 RUN chmod +x /*.sh
 
 ENV AUTHORIZED_KEYS **None**
@@ -93,7 +88,7 @@ ENV PUBLIC_HOST_PORT **None**
 ENV PROXY_PORT **None**
 
 EXPOSE 22
-EXPOSE 1080
+#EXPOSE 1080
 
 ENTRYPOINT ["/usr/bin/supervisord"]
 
