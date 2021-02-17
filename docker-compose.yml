@@ -1,0 +1,12 @@
+version: "3.3"
+
+services:
+  stimio-reverse-ssh:
+    privileged: true
+    build: ./image/.
+    env_file:
+     - ./.env
+    restart: always
+    container_name: ${CONTAINER_NAME}
+    ports:
+      - ${SSH_PORT}:22
