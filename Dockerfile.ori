@@ -1,8 +1,8 @@
-FROM ubuntu:focal
+FROM ubuntu:trusty
 MAINTAINER Feng Honglin <hfeng@tutum.co>
 
 RUN apt-get update && \
-    apt-get -y --no-install-recommends install bash openssh-server autossh pwgen sshpass systemd && \
+    apt-get -y --no-install-recommends install openssh-server autossh pwgen sshpass && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists && \
     mkdir -p /var/run/sshd && \
@@ -12,8 +12,6 @@ RUN apt-get update && \
     sed -i "s/PermitRootLogin.*/PermitRootLogin yes/g" /etc/ssh/sshd_config && \
     echo "GatewayPorts yes" >> /etc/ssh/sshd_config && \
     rm -rf /var/lib/apt/lists/*
-
-#ADD sshd_config /etc/ssh/sshd_config
 
 ADD run.sh /run.sh
 RUN chmod +x /*.sh
@@ -27,8 +25,4 @@ ENV PROXY_PORT **None**
 EXPOSE 22
 EXPOSE 1080
 
-#ENTRYPOINT ["ssh-start"]
-#CMD ["ssh-server"]
-
-#RUN systemctl start ssh
 CMD ["/run.sh"]

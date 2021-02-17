@@ -80,5 +80,7 @@ else
     if [ ! -f /.root_pw_set ]; then
 	    SetRootPass
     fi
-    exec /usr/sbin/sshd -D
+    exec service ssh start 
+    #exec /usr/sbin/sshd -D -e -E /var/log/auth.log
+    #exec /usr/sbin/sshd -D
 fi
